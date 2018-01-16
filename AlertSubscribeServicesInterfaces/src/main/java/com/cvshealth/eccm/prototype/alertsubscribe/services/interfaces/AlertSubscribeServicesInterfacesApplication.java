@@ -7,8 +7,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.Channel;
+import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.Communication;
+import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.MemberCommunicationChannelResponse;
 import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.MemberSubscriptionsResponse;
 import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.Program;
+import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.ProgramChannel;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -25,6 +29,7 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 	// http://www.baeldung.com/jackson-xml-serialization-and-deserialization
 	// http://javasampleapproach.com/java-integration/convert-java-object-intofrom-xml-spring-boot
 	// https://dzone.com/articles/solving-the-xml-problem-with-jackson
+	// https://github.com/eugenp/tutorials/tree/master/jackson
 	
 	public static void main(String[] args) {
 		SpringApplication.run(AlertSubscribeServicesInterfacesApplication.class, args);
@@ -33,10 +38,112 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 	@Override
 	public void run(String... args) throws Exception {
 		
-		MemberSubscriptionsResponse response = new MemberSubscriptionsResponse();
-		response.setMemberId("131073109");
-		response.setClientId("16983");
+		String xml = "";
+		String memberId = "131073109";
+		String clientId = "16983";
+		String communicationId = "261";
+		
+		xml = getMemberSubscriptionsResponseXML(memberId, clientId);	
+		System.out.println(xml);
+		
+		xml = getMemberCommunicationChannelResponseXML(memberId, clientId, communicationId);
+		System.out.println(xml);
+	}
 
+	private String getMemberCommunicationChannelResponseXML(String memberId, String clientId, String communicationId) throws JsonProcessingException {
+		String xml;
+		MemberCommunicationChannelResponse response = getMemberCommunicationChannelResponse(memberId, clientId, communicationId);
+		
+		ObjectMapper xmlMapper = new XmlMapper();
+		xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		
+		xml = xmlMapper.writeValueAsString(response);
+		return xml;
+	}
+
+	private MemberCommunicationChannelResponse getMemberCommunicationChannelResponse(String memberId, String clientId, String communicationId) {
+		MemberCommunicationChannelResponse response = new MemberCommunicationChannelResponse();
+		response.setMemberId(memberId);
+		response.setClientId(clientId);
+		
+		ArrayList<Channel> channels = getSubscriptionChannels();
+		
+		response.setChannels(channels);
+		
+		response.setCommunication(getCommunicationChannels(communicationId));
+		
+		return response;
+	}
+
+	private Communication getCommunicationChannels(String communicationId) {
+		Communication communication = new Communication();
+		communication.setProgramDefaultOptIn('Y');
+		communication.setCommunicationId(communicationId);
+		communication.setChanEmailPriority(1);
+		communication.setChanIvrPriority(3);
+		communication.setChanSmsPriority(2);
+		communication.setChanSecurePriority(1);
+		communication.setChanDefault("Email");
+		communication.setRequired('Y');
+		communication.setMandatory('Y');
+		
+		return communication;
+	}
+
+	private String getMemberSubscriptionsResponseXML(String memberId, String clientId) throws JsonProcessingException {
+		String xml;
+		MemberSubscriptionsResponse response = getMemberSubscriptionResponse(memberId, clientId);
+		
+		ObjectMapper xmlMapper = new XmlMapper();
+		xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		
+		xml = xmlMapper.writeValueAsString(response);
+		return xml;
+	}
+
+	private MemberSubscriptionsResponse getMemberSubscriptionResponse(String memberId, String clientId) {
+		
+		MemberSubscriptionsResponse response = new MemberSubscriptionsResponse();
+		response.setMemberId(memberId);
+		response.setClientId(clientId);
+
+		ArrayList<Channel> channels = getSubscriptionChannels();
+		
+		response.setChannels(channels);
+		
+		ArrayList<Program> programs = getSubscribablePrograms();
+		
+		response.setPrograms(programs);
+		return response;
+	}
+
+	private ArrayList<Program> getSubscribablePrograms() {
+		
+		ArrayList<Program> programs = new ArrayList<Program>();
+		
+		Program prescriptionAlertsProgram = new Program();
+		
+		prescriptionAlertsProgram.setProgramId("101");
+		prescriptionAlertsProgram.setProgramName("Prescription Alerts");
+		prescriptionAlertsProgram.setProgramDescription("Notifications about Status of your Prescription Orders");
+		prescriptionAlertsProgram.setProgramChannel(getProgramChannel());
+		prescriptionAlertsProgram.setVisibleInUi("Yes");
+		prescriptionAlertsProgram.setProgramRule("Standard");
+		programs.add(prescriptionAlertsProgram);
+		return programs;
+	}
+
+	private ProgramChannel getProgramChannel() {
+		ProgramChannel programChannel = new ProgramChannel();
+		programChannel.setChanEmail('Y');
+		programChannel.setChanIvr('Y');
+		programChannel.setChanSms('Y');
+		programChannel.setChanSecure('Y');
+		return programChannel;
+	}
+
+	private ArrayList<Channel> getSubscriptionChannels() {
+		
 		ArrayList<Channel> channels = new ArrayList<Channel>();
 		
 		Channel emailChannel = new Channel();
@@ -56,29 +163,6 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		textChannel.setSubscriptionStatus("NOT ENROLLED");
 		textChannel.setSubscriptionContact("123-456-7890");
 		channels.add(textChannel);
-		
-		response.setChannels(channels);
-		
-		ArrayList<Program> programs = new ArrayList<Program>();
-		
-		Program prescriptionAlertsProgram = new Program();
-		
-		prescriptionAlertsProgram.setProgramId("101");
-		prescriptionAlertsProgram.setProgramName("Prescription Alerts");
-		prescriptionAlertsProgram.setProgramDescription("Notifications about Status of your Prescription Orders");
-		prescriptionAlertsProgram.setProgramChannel("");
-		prescriptionAlertsProgram.setVisibleInUi("Yes");
-		prescriptionAlertsProgram.setProgramRule("Standard");
-		programs.add(prescriptionAlertsProgram);
-		
-		response.setPrograms(programs);
-		
-		ObjectMapper xmlMapper = new XmlMapper();
-		xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		
-		String xml = xmlMapper.writeValueAsString(response);
-		
-		System.out.println(xml);
-		
+		return channels;
 	}
 }

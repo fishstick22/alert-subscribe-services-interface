@@ -1,12 +1,21 @@
 package com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model;
 
+//import java.util.ArrayList;
+//
+//import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+//import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
 public class Program {
 	
 	private String programId; // Program Id for the program added in Maintenance Panel
 	private String programName; // This attribute will provide program name information to be display on PeopleSafe and Portal.
 	private String programDescription; // This attribute will provide program description to be display on Portal.
-	private String programChannel; // This attribute will identify the channel applicable for the program
-	private String visibleInUi; // This attribute identify: 
+	
+    //@JacksonXmlElementWrapper(localName = "programChannels")
+    //@JacksonXmlProperty(localName = "programChannel")
+	private ProgramChannel programChannel; // This attribute will identify the channel applicable for the program
+	
+    private String visibleInUi; // This attribute identify: 
 	                           // •	if the program visible on the UI (Yes)
 	                          // •	Promote program.
     private String programRule; // This attribute display the source where rule is applied from. 
@@ -30,10 +39,10 @@ public class Program {
 	public void setProgramDescription(String programDescription) {
 		this.programDescription = programDescription;
 	}
-	public String getProgramChannel() {
+	public ProgramChannel getProgramChannel() {
 		return programChannel;
 	}
-	public void setProgramChannel(String programChannel) {
+	public void setProgramChannel(ProgramChannel programChannel) {
 		this.programChannel = programChannel;
 	}
 	public String getVisibleInUi() {
