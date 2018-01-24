@@ -2,47 +2,67 @@ package com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model;
 
 public class ProgramChannel {
 
-	private char chanEmail = 'N'; // Y/N
-	private char chanIvr = 'N'; // Y/N
-	private char chanSms = 'N'; // Y/N
-	private char chanSecure = 'N'; // Y/N
-	private char chanMail = 'N'; // Y/N
-	private char chanMobile = 'N'; // Y/N
+	private char chanEmailShowOpt = 'N'; // Y/N
+	private char chanIvrShowOpt = 'N'; // Y/N
+	private char chanSmsShowOpt = 'N'; // Y/N
+	private char chanSecureShowOpt = 'N'; // Y/N
+//	private char chanMailShowOpt = 'N'; // Y/N
+//	private char chanMobileShowOpt = 'N'; // Y/N
 
-	public char getChanEmail() {
-		return chanEmail;
+	private char chanEmailMemberEnroll = 'N'; // Y/N
+	private char chanIvrMemberEnroll = 'N'; // Y/N
+	private char chanSmsMemberEnroll = 'N'; // Y/N
+	private char chanSecureMemberEnroll = 'N'; // Y/N
+//	private char chanMailMemberEnroll = 'N'; // Y/N
+//	private char chanMobileMemberEnroll = 'N'; // Y/N
+	public char getChanEmailShowOpt() {
+		return chanEmailShowOpt;
 	}
-	public void setChanEmail(char chanEmail) {
-		this.chanEmail = chanEmail;
+	public void setChanEmailShowOpt(char chanEmailShowOpt) {
+		this.chanEmailShowOpt = chanEmailShowOpt;
 	}
-	public char getChanIvr() {
-		return chanIvr;
+	public char getChanIvrShowOpt() {
+		return chanIvrShowOpt;
 	}
-	public void setChanIvr(char chanIvr) {
-		this.chanIvr = chanIvr;
+	public void setChanIvrShowOpt(char chanIvrShowOpt) {
+		this.chanIvrShowOpt = chanIvrShowOpt;
 	}
-	public char getChanSms() {
-		return chanSms;
+	public char getChanSmsShowOpt() {
+		return chanSmsShowOpt;
 	}
-	public void setChanSms(char chanSms) {
-		this.chanSms = chanSms;
+	public void setChanSmsShowOpt(char chanSmsShowOpt) {
+		this.chanSmsShowOpt = chanSmsShowOpt;
 	}
-	public char getChanSecure() {
-		return chanSecure;
+	public char getChanSecureShowOpt() {
+		return chanSecureShowOpt;
 	}
-	public void setChanSecure(char chanSecure) {
-		this.chanSecure = chanSecure;
+	public void setChanSecureShowOpt(char chanSecureShowOpt) {
+		this.chanSecureShowOpt = chanSecureShowOpt;
 	}
-	public char getChanMail() {
-		return chanMail;
+	public char getChanEmailMemberEnroll() {
+		return chanEmailMemberEnroll;
 	}
-	public void setChanMail(char chanMail) {
-		this.chanMail = chanMail;
+	public void setChanEmailMemberEnroll(char chanEmailMemberEnroll) {
+		this.chanEmailMemberEnroll = chanEmailMemberEnroll;
 	}
-	public char getChanMobile() {
-		return chanMobile;
+	public char getChanIvrMemberEnroll() {
+		return chanIvrMemberEnroll;
 	}
-	public void setChanMobile(char chanMobile) {
-		this.chanMobile = chanMobile;
+	public void setChanIvrMemberEnroll(char chanIvrMemberEnroll) {
+		this.chanIvrMemberEnroll = chanIvrMemberEnroll;
 	}
+	public char getChanSmsMemberEnroll() {
+		return chanSmsMemberEnroll;
+	}
+	public void setChanSmsMemberEnroll(char chanSmsMemberEnroll) {
+		this.chanSmsMemberEnroll = chanSmsMemberEnroll;
+	}
+	public char getChanSecureMemberEnroll() {
+		return chanSecureMemberEnroll;
+	}
+	public void setChanSecureMemberEnroll(char chanSecureMemberEnroll) {
+		this.chanSecureMemberEnroll = chanSecureMemberEnroll;
+	}
+
+
 }

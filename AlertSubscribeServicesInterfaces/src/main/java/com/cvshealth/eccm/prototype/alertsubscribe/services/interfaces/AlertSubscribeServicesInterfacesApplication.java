@@ -48,6 +48,14 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		
 		xml = getMemberCommunicationChannelResponseXML(memberId, clientId, communicationId);
 		System.out.println(xml);
+		
+		String json; 
+		MemberSubscriptionsResponse response = getMemberSubscriptionResponse(memberId, clientId);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		
+		System.out.println(mapper.writeValueAsString(response));
 	}
 
 	private String getMemberCommunicationChannelResponseXML(String memberId, String clientId, String communicationId) throws JsonProcessingException {
@@ -135,10 +143,16 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 
 	private ProgramChannel getProgramChannel() {
 		ProgramChannel programChannel = new ProgramChannel();
-		programChannel.setChanEmail('Y');
-		programChannel.setChanIvr('Y');
-		programChannel.setChanSms('Y');
-		programChannel.setChanSecure('Y');
+		programChannel.setChanEmailShowOpt('Y');
+		programChannel.setChanIvrShowOpt('Y');
+		programChannel.setChanSmsShowOpt('Y');
+		programChannel.setChanSecureShowOpt('Y');
+		
+		programChannel.setChanEmailMemberEnroll('Y');
+		programChannel.setChanIvrMemberEnroll('N');
+		programChannel.setChanSmsMemberEnroll('N');
+		programChannel.setChanSecureMemberEnroll('Y');
+		
 		return programChannel;
 	}
 
@@ -148,20 +162,23 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		
 		Channel emailChannel = new Channel();
 		emailChannel.setSubscriptionType("Email");
+		emailChannel.setSubscriptionCode("001");
 		emailChannel.setSubscriptionStatus("ENROLLED");
 		emailChannel.setSubscriptionContact("user@domain.tld");
 		channels.add(emailChannel);
 
 		Channel callChannel = new Channel();
 		callChannel.setSubscriptionType("Call");
+		callChannel.setSubscriptionCode("002");
 		callChannel.setSubscriptionStatus("NOT ENROLLED");
 		callChannel.setSubscriptionContact("");
 		channels.add(callChannel);
 
 		Channel textChannel = new Channel();
 		textChannel.setSubscriptionType("Text");
-		textChannel.setSubscriptionStatus("NOT ENROLLED");
-		textChannel.setSubscriptionContact("123-456-7890");
+		textChannel.setSubscriptionCode("999");
+		textChannel.setSubscriptionStatus("OFF");
+		textChannel.setSubscriptionContact("");
 		channels.add(textChannel);
 		return channels;
 	}
