@@ -7,6 +7,7 @@ public class Channel {
 	private String subscriptionStatus; // This attribute will provide active phone number along with other statuses 
 	                                  // like NOT ENROLLED, Off (No Alerts) for a given channel.
 	private String subscriptionContact; // This is the phone number or email address
+	private String subscriptionContactValid = "Y";
 	
 	public String getSubscriptionType() {
 		return subscriptionType;
@@ -31,6 +32,12 @@ public class Channel {
 	}
 	public void setSubscriptionContact(String subscriptionContact) {
 		this.subscriptionContact = subscriptionContact;
+	}
+	public String getSubscriptionContactValid() {
+		return subscriptionContactValid;
+	}
+	public void setSubscriptionContactValid(String subscriptionContactValid) {
+		this.subscriptionContactValid = subscriptionContactValid;
 	}
 
 }

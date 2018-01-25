@@ -12,6 +12,7 @@ import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.Mem
 import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.MemberSubscriptionsResponse;
 import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.Program;
 import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.ProgramChannel;
+import com.cvshealth.eccm.prototype.alertsubscribe.services.interfaces.model.ServiceError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -48,14 +49,10 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		
 		xml = getMemberCommunicationChannelResponseXML(memberId, clientId, communicationId);
 		System.out.println(xml);
-		
-		String json; 
-		MemberSubscriptionsResponse response = getMemberSubscriptionResponse(memberId, clientId);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationFeature.INDENT_OUTPUT);
-		
-		System.out.println(mapper.writeValueAsString(response));
+
+		System.out.println("MemberSubscriptionsResponse : "+getMemberSubscriptionsResponseJSON(memberId, clientId));
+		System.out.println("MemberCommunicationChannelResponse : "+getMemberCommunicationChannelResponseJSON(memberId, clientId, communicationId));
+
 	}
 
 	private String getMemberCommunicationChannelResponseXML(String memberId, String clientId, String communicationId) throws JsonProcessingException {
@@ -67,6 +64,16 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		
 		xml = xmlMapper.writeValueAsString(response);
 		return xml;
+	}
+	
+	private String getMemberCommunicationChannelResponseJSON(String memberId, String clientId, String communicationId) throws JsonProcessingException {
+		
+		MemberCommunicationChannelResponse response = getMemberCommunicationChannelResponse(memberId, clientId, communicationId);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		
+		return mapper.writeValueAsString(response);
 	}
 
 	private MemberCommunicationChannelResponse getMemberCommunicationChannelResponse(String memberId, String clientId, String communicationId) {
@@ -80,7 +87,35 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		
 		response.setCommunication(getCommunicationChannels(communicationId));
 		
+		response.setPrograms(getSubscribedPrograms());
+		
 		return response;
+	}
+
+	private ArrayList<Program> getSubscribedPrograms() {
+		ArrayList<Program> programs = new ArrayList<Program>();
+		
+		Program prescriptionAlertsProgram = new Program();
+		
+		prescriptionAlertsProgram.setProgramId("101");
+		prescriptionAlertsProgram.setProgramName("Prescription Alerts");
+//		prescriptionAlertsProgram.setProgramDescription("Notifications about Status of your Prescription Orders");
+		prescriptionAlertsProgram.setProgramChannel(getProgramChannel());
+//		prescriptionAlertsProgram.setVisibleInUi("Yes");
+		prescriptionAlertsProgram.setProgramRule("Standard");
+		programs.add(prescriptionAlertsProgram);
+		
+		Program showRxProgram = new Program();
+		
+		showRxProgram.setProgramId("103");
+		showRxProgram.setProgramName("Show Full Drug Name");
+//		prescriptionAlertsProgram.setProgramDescription("Notifications about Status of your Prescription Orders");
+		showRxProgram.setProgramChannel(getProgramChannel());
+//		prescriptionAlertsProgram.setVisibleInUi("Yes");
+		showRxProgram.setProgramRule("Standard");
+		programs.add(showRxProgram);
+		
+		return programs;
 	}
 
 	private Communication getCommunicationChannels(String communicationId) {
@@ -108,21 +143,39 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		xml = xmlMapper.writeValueAsString(response);
 		return xml;
 	}
+	
+	private String getMemberSubscriptionsResponseJSON(String memberId, String clientId) throws JsonProcessingException {
+		
+		MemberSubscriptionsResponse response = getMemberSubscriptionResponse(memberId, clientId);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		
+		return mapper.writeValueAsString(response);
+	}
 
 	private MemberSubscriptionsResponse getMemberSubscriptionResponse(String memberId, String clientId) {
 		
 		MemberSubscriptionsResponse response = new MemberSubscriptionsResponse();
 		response.setMemberId(memberId);
 		response.setClientId(clientId);
-
-		ArrayList<Channel> channels = getSubscriptionChannels();
+		response.setChannels(getSubscriptionChannels());
+		response.setPrograms(getSubscribablePrograms());
+		response.setErrors(getErrors(memberId));
 		
-		response.setChannels(channels);
-		
-		ArrayList<Program> programs = getSubscribablePrograms();
-		
-		response.setPrograms(programs);
 		return response;
+	}
+
+	private ArrayList<ServiceError> getErrors(String memberId) {
+		ArrayList<ServiceError> errors = new ArrayList<ServiceError>();
+		
+		ServiceError error = new ServiceError();
+		error.setErrorCode("000");
+		error.setErrorMessage("Could not get member subscriptions for " + memberId);
+		
+		errors.add(error);
+		
+		return errors;
 	}
 
 	private ArrayList<Program> getSubscribablePrograms() {
@@ -138,7 +191,34 @@ public class AlertSubscribeServicesInterfacesApplication implements CommandLineR
 		prescriptionAlertsProgram.setVisibleInUi("Yes");
 		prescriptionAlertsProgram.setProgramRule("Standard");
 		programs.add(prescriptionAlertsProgram);
+		
+		Program showRxProgram = new Program();
+		
+		showRxProgram.setProgramId("103");
+		showRxProgram.setProgramName("Show Full Drug Name");
+		showRxProgram.setProgramDescription("Show full drug names on emails");
+		showRxProgram.setProgramChannel(getEmailOnlyProgramChannel());
+		showRxProgram.setVisibleInUi("Promote");
+		showRxProgram.setProgramRule("Standard");
+		programs.add(showRxProgram);
+		
+		
 		return programs;
+	}
+
+	private ProgramChannel getEmailOnlyProgramChannel() {
+		ProgramChannel programChannel = new ProgramChannel();
+		programChannel.setChanEmailShowOpt('Y');
+		programChannel.setChanIvrShowOpt('N');
+		programChannel.setChanSmsShowOpt('N');
+		programChannel.setChanSecureShowOpt('N');
+		
+//		programChannel.setChanEmailMemberEnroll('');
+//		programChannel.setChanIvrMemberEnroll('N');
+//		programChannel.setChanSmsMemberEnroll('N');
+//		programChannel.setChanSecureMemberEnroll('Y');
+		
+		return programChannel;
 	}
 
 	private ProgramChannel getProgramChannel() {

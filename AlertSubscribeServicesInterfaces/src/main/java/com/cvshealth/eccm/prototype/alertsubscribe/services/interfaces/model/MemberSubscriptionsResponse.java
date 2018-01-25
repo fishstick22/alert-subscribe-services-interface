@@ -21,6 +21,10 @@ public class MemberSubscriptionsResponse {
     @JacksonXmlProperty(localName = "program")
 	private ArrayList<Program> programs;
     
+    @JacksonXmlElementWrapper(localName = "errors")
+    @JacksonXmlProperty(localName = "error")
+	private ArrayList<ServiceError> errors;
+    
 	public String getMemberId() {
 		return memberId;
 	}
@@ -44,6 +48,12 @@ public class MemberSubscriptionsResponse {
 	}
 	public void setPrograms(ArrayList<Program> programs) {
 		this.programs = programs;
+	}
+	public ArrayList<ServiceError> getErrors() {
+		return errors;
+	}
+	public void setErrors(ArrayList<ServiceError> errors) {
+		this.errors = errors;
 	}
 
 }

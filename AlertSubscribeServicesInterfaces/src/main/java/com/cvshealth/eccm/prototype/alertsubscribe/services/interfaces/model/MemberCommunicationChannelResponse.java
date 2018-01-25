@@ -16,6 +16,10 @@ public class MemberCommunicationChannelResponse {
 	private ArrayList<Channel> channels;
 
     private Communication communication;
+    
+    @JacksonXmlElementWrapper(localName = "programs")
+    @JacksonXmlProperty(localName = "program")
+	private ArrayList<Program> programs;
 
 	public String getMemberId() {
 		return memberId;
@@ -47,5 +51,13 @@ public class MemberCommunicationChannelResponse {
 
 	public void setCommunication(Communication communication) {
 		this.communication = communication;
+	}
+
+	public ArrayList<Program> getPrograms() {
+		return programs;
+	}
+
+	public void setPrograms(ArrayList<Program> programs) {
+		this.programs = programs;
 	}
 }
